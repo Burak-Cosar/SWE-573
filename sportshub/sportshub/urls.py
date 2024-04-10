@@ -21,5 +21,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('webapp.urls')),
     path('members/', include('django.contrib.auth.urls')),
-    path('members/', include('members.urls'))
+    path('members/', include('members.urls')),
 ]
+
+# Configure Admin Title
+admin.site.site_header = "Sportshub Administration Page"
+admin.site.site_title = "Sportshub"
+admin.site.index_title = "Administration"
