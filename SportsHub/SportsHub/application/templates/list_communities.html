@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Communities</h1>
+<ul>
+    {% for community in communities %}
+        <li>
+            <strong>{{ community.name }}</strong> - {{ community.description }}
+            <a class="btn btn-secondary btn-sm" href="{% url 'community_detail' community.id %}">View</a>
+        </li>
+    {% empty %}
+        <li>No communities found.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
