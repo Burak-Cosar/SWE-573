@@ -1,12 +1,17 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class Community(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True, default='')
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name='application_owned_communities')
-    admins = models.ManyToManyField(User, related_name='application_administered_communities')
+    admin = models.ManyToManyField(User, related_name='administered_communities')
+    moderator = models.ManyToManyField(User, related_name='moderated_communities')
     members = models.ManyToManyField(User, through='CommunityMembership', related_name='application_communities')
+
+    def is_member(self, user):
+        return self.members.filter(id=user.id).exists()
 
     def __str__(self):
         return self.name

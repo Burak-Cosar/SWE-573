@@ -2,14 +2,24 @@
 
 {% block content %}
 <h1>Communities</h1>
+<br/>
 <ul>
     {% for community in communities %}
-        <li>
-            <strong>{{ community.name }}</strong> - {{ community.description }}
-            <a class="btn btn-secondary btn-sm" href="{% url 'community_detail' community.id %}">View</a>
-        </li>
+    <li>
+        <strong>{{ community.community.name }}</strong> - {{ community.community.description }}
+        <br/>
+        {% if community.is_member %}
+            <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.community.id %}">View</a>
+            <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.community.id %}">Leave</a>
+        {% else %}
+            <a class="btn btn-success btn-sm" href="{% url 'join_community' community.community.id %}">Join</a>
+        {% endif %}
+    </li>
+    <br/>
     {% empty %}
-        <li>No communities found.</li>
+    <li>No communities found.</li>
     {% endfor %}
+    <br/><br/>
+    <a class="btn btn-success" href="{% url 'create_community' %}">New Community</a>
 </ul>
 {% endblock %}

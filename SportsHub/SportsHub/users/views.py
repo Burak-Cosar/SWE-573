@@ -2,7 +2,8 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm
-from users.forms import RegisterUserForm
+from users.forms import RegisterUserForm, UserProfile
+from .models import SportsHubUser
 # Create your views here.
 
 def login_user(request):
@@ -42,3 +43,13 @@ def register_user(request):
         form = RegisterUserForm()
     
     return render(request,'authenticate/register_user.html', {'form': form})
+
+def view_profile(request):
+    user = request.user
+    form = UserProfile(request.POST or None, instance = user)
+
+    if form.is_valid():
+        form.save()
+        return redirect('home')
+
+    return render(request, 'profile.html', {'user': user, 'form': form})

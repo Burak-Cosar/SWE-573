@@ -3,5 +3,14 @@
 {% block content %}
 <center>
     <h1> Hello! </h1>
+    <br/>
+    {% if user.is_authenticated %}
+    <p>Visit the List of Communities</p>
+    <a href="{% url 'list_communities' %}" class="btn btn-secondary">View Communities</a>
+    {% else %}
+    <p>You Must Register or Login to Access SportsHub!</p>
+    <a href="{% url 'register_user' %}" class="btn btn-success btn-sm">Register</a>
+    <a href="{% url 'login' %}" class="btn btn-secondary btn-sm">Login</a>
+    {% endif %}
 </center>
 {% endblock %}

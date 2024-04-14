@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Create Community</h2>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Create Community</button>
-</form>
+    <h2>Create Community</h2>
+    <br/>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br/>
+        <input type="submit" value="New Community" class="btn btn-secondary">
+    </form>
 {% endblock %}
