@@ -80,7 +80,7 @@ LOGIN_URL = '/users/login_user'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'SportsHubDB',
+        'NAME': 'SocialHub',
         'USER': 'burakcosar',
         'PASSWORD': 'BC8563nb',
         'HOST': 'localhost',
