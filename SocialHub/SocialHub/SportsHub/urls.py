@@ -28,6 +28,6 @@ urlpatterns = [
 
 
 # Configure Admin Title
-admin.site.site_header = "Sportshub Administration Page"
-admin.site.site_title = "Sportshub"
+admin.site.site_header = "SocialHub Administration Page"
+admin.site.site_title = "SocialHub"
 admin.site.index_title = "Administration"
