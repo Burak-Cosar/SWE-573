@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Community, CommunityMembership
+from .models import Community, CommunityMembership, Template, TemplateField
 from django.contrib.auth.admin import UserAdmin
 
 class CommunityMembershipInline(admin.TabularInline):
@@ -20,3 +20,12 @@ class CommunityAdmin(admin.ModelAdmin):
     list_moderators.short_description = 'Moderators'
 
 admin.site.register(Community, CommunityAdmin)
+
+class TemplateFieldInline(admin.TabularInline):
+    model = TemplateField
+    extra = 1
+
+class TemplateAdmin(admin.ModelAdmin):
+    inlines = [TemplateFieldInline]
+
+admin.site.register(Template, TemplateAdmin)

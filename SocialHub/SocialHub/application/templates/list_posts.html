@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Posts</h1>
+  <ul>
+    {% for post in posts %}
+      <li>
+        <h2><a href="{% url 'view_post' community.id post.id %}">{{ post.title }}</a></h2>
+        <p>{{ post.content|slice:":150" }}...</p>
+      </li>
+    {% empty %}
+      <li>No posts available.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

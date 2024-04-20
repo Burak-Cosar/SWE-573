@@ -1,8 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
 {% if user_is_member %}
     <h1>{{ community.name }}</h1>
+    <br/>
+    {% if user_is_admin %}  
+        <a class="btn btn-primary btn-sm" href="{% url 'manage_templates' community.id %}">Manage Templates (Admin)</a>
+        <br/><br/>
+    {% endif %}
+    <br/>
+    <select id="templateSelect" onchange="updateCreatePostLink()">
+      {% for template in templates %}
+      <option value="{{ template.id }}">{{ template.title }}</option>
+      {% empty %}
+      <option>No available templates</option>
+      {% endfor %}
+    </select>
+    <a id="createPostLink" class="btn btn-success btn-sm" href="{% url 'create_post' community.id 0 %}">Create Post</a>
+    <br/><br/>
+    {% for post in posts %}
+        <li> <b>Title: </b>{{ post.title }}
+            <p><b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspDescription: </b> {{ post.description|slice:":150" }}...</p>
+        </li>
+    {% empty %}
+        <li>No posts available in this community.</li>
+    {% endfor %}
+
     <br/>
     <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.id %}">Leave Community</a>
 {% else %}
@@ -10,4 +34,19 @@
     <br/>
     <a class="btn btn-success btn-sm" href="{% url 'join_community' community.id %}">Join Now!</a>
 {% endif %}
+    <br/> <br/>
+    <a class="btn btn-secondary btn-sm" href="{% url 'list_communities' %}">Back to Communities</a>
+
+
+  <script>
+    function updateCreatePostLink() {
+        var selectedTemplateId = document.getElementById('templateSelect').value;
+        var link = document.getElementById('createPostLink');
+        link.href = "{% url 'create_post' community.id '0' %}".replace('0', selectedTemplateId);
+    }
+    document.addEventListener('DOMContentLoaded', function() {
+        updateCreatePostLink(); // Update link on page load
+    });
+    </script>
+
 {% endblock %}

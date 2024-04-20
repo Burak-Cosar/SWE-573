@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post" id="template_form">
+    {% csrf_token %}
+    <label>Post Title:</label>
+    <input type="text" name="post_title" placeholder="Enter post title">
+    <br/><br/>
+    <label>Post Description:</label>
+    <textarea name="post_description" placeholder="Enter post description"></textarea>
+    <br/><br/>
+    <div id="dynamic_fields"></div>
+    <input type="hidden" name="field_count" id="field_count" value="0">
+    <br/>
+    <button type="button" id="add_field">Add Field</button>
+    <br/> <br/>
+    <button type="submit">Submit</button>
+    </form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function() {
+    let fieldCount = 0;
+
+    $('#add_field').click(function() {
+        $('#dynamic_fields').append(`
+            <div>
+                <input type="text" name="custom_field_${fieldCount}" placeholder="Field Name">
+                <select name="custom_type_${fieldCount}">
+                    <option value="text">Text</option>
+                    <option value="number">Number</option>
+                    <option value="date">Date</option>
+                </select>
+            </div>
+        `);
+        $('#field_count').val(++fieldCount);
+    });
+});
+</script>
+
+{% endblock %}

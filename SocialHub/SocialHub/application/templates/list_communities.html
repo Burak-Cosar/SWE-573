@@ -3,7 +3,10 @@
 {% block content %}
 <h1>Communities</h1>
 <br/>
+<a class="btn btn-primary" href="{% url 'create_community' %}">Create New!</a>
+<br/><br/>
 <ul>
+
     {% for community in communities %}
     <li>
         <strong>{{ community.community.name }}</strong> - {{ community.community.description }}
@@ -19,7 +22,6 @@
     {% empty %}
     <li>No communities found.</li>
     {% endfor %}
-    <br/><br/>
-    <a class="btn btn-success" href="{% url 'create_community' %}">New Community</a>
+    
 </ul>
 {% endblock %}
