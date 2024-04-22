@@ -12,6 +12,7 @@ User = get_user_model()
 def home(request):
     return render(request, 'home.html', {})
 
+# PLACEHOLDING FOR NOW
 def search(request):
     if request.method == "POST":
         searched = request.POST['searched'] 
@@ -22,7 +23,6 @@ def search(request):
         return render(request, 'search.html', {})
 
 # COMMUNITY VIEWS BELOW    
-
 @login_required
 def create_community(request):
     if request.method == 'POST':
@@ -82,8 +82,7 @@ def list_communities(request):
         })
     return render(request, 'list_communities.html', {'communities': communities_data})
 
-# COMMUNITY MODERATOR ADD/REMOVE
-
+# COMMUNITY MODERATOR ADD/REMOVE PLACEHOLDING FOR NOW
 @login_required
 def add_moderator(request, community_id, user_id):
     community = get_object_or_404(Community, id=community_id)
@@ -105,7 +104,6 @@ def remove_moderator(request, community_id, user_id):
         return redirect('community_content', community_id=community.id)
     
 # TEMPLATE VIEWS
-
 def manage_templates(request, community_id):
     community = get_object_or_404(Community, id=community_id)
     return render (request, 'manage_templates.html', {'community': community})
@@ -124,7 +122,7 @@ def create_template(request, community_id):
             )
             template.save()
 
-            # Handle custom fields creation
+            # CUSTOM FIELDS
             field_count = int(request.POST.get('field_count', 0))
             for i in range(field_count):
                 field_name = form.cleaned_data.get(f'custom_field_{i}', '')
@@ -159,7 +157,7 @@ def get_dynamic_form(template_id):
                 field_instance = forms.IntegerField(label=field.field_name, required=False)
             elif field.field_type == 'date':
                 field_instance = forms.DateField(label=field.field_name, required=False)
-            # More types can be added here
+            # MORE TYPES WILL BE ADDED
             setattr(DynamicPostForm, field.field_name, field_instance)
     return DynamicForm
 
@@ -176,7 +174,7 @@ def create_post(request, community_id, template_id):
             new_post = form.save(commit=False)
             new_post.community = community
             new_post.template = template
-            new_post.created_by = request.user  # Assuming you have user authentication
+            new_post.created_by = request.user 
             new_post.save()
 
             return redirect('community_content', community_id=community_id)
