@@ -1,10 +1,22 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<article>
     <h1>{{ post.title }}</h1>
-    <p>{{ post.content }}</p>
-    {% if post.image %}
-        <img src="{{ post.image.url }}" alt="Post Image">
-    {% endif %}
-    <p>Posted in: {{ community.name }}</p>
+    <p>{{ post.description }}</p>
+    
+    <section>
+        <ul>
+            {% for key, value in post.data.items %}
+                <li>{{ key }}: {{ value }}</li>
+            {% endfor %}
+        </ul>
+    </section>
+    
+    <footer>
+        <p>Posted in: {{ post.community.name }}</p>
+        <br/><br/>
+        <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.id %}">Back to Community</a>
+    </footer>
+</article>
 {% endblock %}

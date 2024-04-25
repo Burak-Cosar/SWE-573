@@ -12,7 +12,6 @@ urlpatterns = [
     path('community/<int:community_id>/templates/', views.manage_templates, name='manage_templates'),
     path('community/<int:community_id>/templates/create', views.create_template, name='create_template'),
     path('community/<int:community_id>/posts/<int:template_id>/create', views.create_post, name='create_post'),
-    #path('community/<int:community_id>/posts/', views.list_def_posts, name='list_posts'),
-    #path('community/<int:community_id>/posts/<int:post_id>/', views.view_post, name='view_post'),
+    path('community/<int:community_id>/posts/<int:post_id>/', views.view_post, name='view_post'),
 
 ]

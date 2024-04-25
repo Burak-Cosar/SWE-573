@@ -22,6 +22,8 @@
     {% for post in posts %}
         <li> <b>Title: </b>{{ post.title }}
             <p><b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspDescription: </b> {{ post.description|slice:":150" }}...</p>
+            <a class="btn btn-secondary btn-sm" href="{% url 'view_post' community.id post.id %}">View</a>
+            <br/><br/><br/>
         </li>
     {% empty %}
         <li>No posts available in this community.</li>

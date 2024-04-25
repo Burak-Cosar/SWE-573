@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import JSONField
 
+
 User = get_user_model()
 
 class Community(models.Model):
@@ -55,3 +56,5 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+

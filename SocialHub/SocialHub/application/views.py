@@ -161,8 +161,6 @@ def get_dynamic_form(template_id):
             setattr(DynamicPostForm, field.field_name, field_instance)
     return DynamicForm
 
-
-
 def create_post(request, community_id, template_id):
     community = get_object_or_404(Community, pk=community_id)
     template = get_object_or_404(Template, pk=template_id)
@@ -174,9 +172,17 @@ def create_post(request, community_id, template_id):
             new_post = form.save(commit=False)
             new_post.community = community
             new_post.template = template
-            new_post.created_by = request.user 
-            new_post.save()
+            new_post.created_by = request.user
 
+            # JSON field
+            data = {}
+            for field in template_fields:
+                field_name = field['field_name']
+                if field_name in form.cleaned_data:
+                    data[field_name] = form.cleaned_data[field_name]
+            new_post.data = data  # SAVE 
+
+            new_post.save()
             return redirect('community_content', community_id=community_id)
     else:
         form = DynamicPostForm(template_fields=template_fields)
@@ -186,3 +192,14 @@ def create_post(request, community_id, template_id):
         'community_id': community_id,
         'template_id': template_id
     })
+
+def view_post(request, community_id, post_id):
+    community= get_object_or_404(Community, pk=community_id)
+    post= get_object_or_404(Post, pk=post_id)
+
+    return render(request, 'view_post.html', {
+        'community': community,
+        'post': post
+    })
+
+
