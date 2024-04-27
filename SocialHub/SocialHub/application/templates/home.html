@@ -2,10 +2,12 @@
 
 {% block content %}
 <center>
-    <h1> Hello! </h1>
+    <br/><br/>
+    <h1> Welcome! </h1>
     <br/>
     {% if user.is_authenticated %}
     <p>Visit the List of Communities</p>
+    <br/>
     <a href="{% url 'list_communities' %}" class="btn btn-secondary">View Communities</a>
     {% else %}
     <p>You Must Register or Login to Access SportsHub!</p>

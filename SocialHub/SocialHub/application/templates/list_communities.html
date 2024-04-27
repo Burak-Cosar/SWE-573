@@ -2,17 +2,16 @@
 
 {% block content %}
 <h1>Communities</h1>
-<br/>
-<a class="btn btn-primary" href="{% url 'create_community' %}">Create New!</a>
-<br/><br/>
+<a class="btn btn-success" href="{% url 'create_community' %}">Create New!</a>
+<br/><hr/><br/>
 <ul>
 
     {% for community in communities %}
     <li>
         <strong>{{ community.community.name }}</strong> - {{ community.community.description }}
         <br/>
-        {% if community.is_member %}
             <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.community.id %}">View</a>
+        {% if community.is_member %}
             <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.community.id %}">Leave</a>
         {% else %}
             <a class="btn btn-success btn-sm" href="{% url 'join_community' community.community.id %}">Join</a>

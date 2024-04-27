@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django import forms
-from .models import Community, CommunityMembership, Template, TemplateField, Post
-from .forms import CommunityForm, TemplateForm, DynamicPostForm
+from .models import Community, CommunityMembership, Template, TemplateField, Post, Comment
+from .forms import CommunityForm, TemplateForm, DynamicPostForm, CommentForm
+from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
+import json
+from datetime import date
 
 
 User = get_user_model()
@@ -13,14 +16,16 @@ def home(request):
     return render(request, 'home.html', {})
 
 # PLACEHOLDING FOR NOW
-def search(request):
-    if request.method == "POST":
-        searched = request.POST['searched'] 
-        items = all.objects.filter(name__contains = searched)
+# def search(request):
+#     if request.method == "POST":
+#         searched = request.POST['searched'] 
+#         items = all.objects.filter(name__contains = searched)
         
-        return render(request, 'search.html', {'searched': searched, 'items':items})
-    else:
-        return render(request, 'search.html', {})
+#         return render(request, 'search.html', {'searched': searched, 'items':items})
+#     else:
+def search(request):
+    return render(request, 'search.html', {})
+
 
 # COMMUNITY VIEWS BELOW    
 @login_required
@@ -141,7 +146,7 @@ def create_template(request, community_id):
 
     return render(request, 'create_template.html', {'form': form, 'community_id': community_id})
 
-
+@login_required
 def get_dynamic_form(template_id):
     template = Template.objects.get(pk=template_id)
     class DynamicForm(forms.Form):
@@ -161,6 +166,7 @@ def get_dynamic_form(template_id):
             setattr(DynamicPostForm, field.field_name, field_instance)
     return DynamicForm
 
+@login_required
 def create_post(request, community_id, template_id):
     community = get_object_or_404(Community, pk=community_id)
     template = get_object_or_404(Template, pk=template_id)
@@ -179,8 +185,14 @@ def create_post(request, community_id, template_id):
             for field in template_fields:
                 field_name = field['field_name']
                 if field_name in form.cleaned_data:
-                    data[field_name] = form.cleaned_data[field_name]
-            new_post.data = data  # SAVE 
+                    # to handle date view
+                    field_value = form.cleaned_data[field_name]
+                    if isinstance(field_value, date):
+                        field_value = field_value.isoformat()
+                    data[field_name] = field_value
+
+            # to serialize date data
+            new_post.data = json.dumps(data, cls=DjangoJSONEncoder)
 
             new_post.save()
             return redirect('community_content', community_id=community_id)
@@ -193,13 +205,34 @@ def create_post(request, community_id, template_id):
         'template_id': template_id
     })
 
+@login_required
 def view_post(request, community_id, post_id):
-    community= get_object_or_404(Community, pk=community_id)
-    post= get_object_or_404(Post, pk=post_id)
+    community = get_object_or_404(Community, pk=community_id)
+    post = get_object_or_404(Post, pk=post_id)
+    user_is_member = community.is_member(request.user)
+    comments = post.comments.all()
+
+    if isinstance(post.data, str):
+        try:
+            post.data = json.loads(post.data)
+        except json.JSONDecodeError:
+            post.data = {}
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
+            comment.save()
+            return redirect('view_post', community_id=community_id, post_id=post_id)
+    else:
+        form = CommentForm()
 
     return render(request, 'view_post.html', {
         'community': community,
-        'post': post
+        'post': post,
+        'comments': comments,
+        'form': form,
+        'user_is_member': user_is_member,
     })
-
-

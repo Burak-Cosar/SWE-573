@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, formset_factory
-from .models import Community, Template, Post
+from .models import Community, Template, Post, Comment
 
 class CommunityForm(ModelForm):
     class Meta:
@@ -68,3 +68,16 @@ class DynamicPostForm(forms.ModelForm):
                 self.fields[field_name] = forms.IntegerField()
             elif field_type == 'date':
                 self.fields[field_name] = forms.DateField()
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+
+        labels = {
+            'content': 'New Comment',
+            }
+
+        widgets = {
+            'content': forms.Textarea(attrs={'class':'form-control', 'placeholder':'Write a comment'}),
+        }

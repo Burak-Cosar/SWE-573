@@ -2,9 +2,8 @@
 
 {% block content %}
 <article>
-    <h1>{{ post.title }}</h1>
-    <p>{{ post.description }}</p>
-    
+    <h1>Title: {{ post.title }}</h1>
+    <p><b>Description:</b> {{ post.description }}</p>
     <section>
         <ul>
             {% for key, value in post.data.items %}
@@ -12,11 +11,33 @@
             {% endfor %}
         </ul>
     </section>
-    
+
+    <section>
+        <br/><hr><br/>
+        <h3>Comments:</h3>
+        <ul>
+            {% if comments %}
+                {% for comment in comments %}
+                    <li><b>{{ comment.user.username }}</b>: {{ comment.content }}</li>
+                {% endfor %}
+            {% else %}
+            <p>Currently, no comment exists for this post!</p>
+            {% endif %}
+        </ul>
+        <br/><hr><br/>
+    {% if user_is_member %}
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-success btn-sm" >Add Comment</button>
+            <br/><br/>
+        </form>
+    </section>
+    {% endif %}
     <footer>
-        <p>Posted in: {{ post.community.name }}</p>
+        <p><b>Posted in:</b> {{ post.community.name }}</p>
         <br/><br/>
-        <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.id %}">Back to Community</a>
+        <a class="btn btn-primary btn-sm" href="{% url 'community_content' community.id %}">Back to Community</a>
     </footer>
 </article>
 {% endblock %}
