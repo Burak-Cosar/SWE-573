@@ -1,4 +1,9 @@
 Staging/
 sportshub-sample/
+SocialHub/SocialHub/static
+SocialHub/SocialHub/staticfiles
 SocialHub/virt
+MVP-Docker
 .DS_Store
+SocialHub/SocialHub/.env
+Local-Staging/

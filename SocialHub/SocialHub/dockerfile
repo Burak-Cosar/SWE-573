@@ -1,0 +1,28 @@
+# Base image
+FROM python:3.9-slim
+
+# Environment variables
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
+# Working directory
+WORKDIR /app
+
+# System dependencies
+RUN apt-get update && apt-get install -y netcat-openbsd
+
+# Python dependencies
+COPY requirements.txt /app/
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Rest of the code
+COPY . /app/
+
+# Collect static files
+RUN python manage.py collectstatic --noinput
+
+# Port
+EXPOSE 8000
+
+# Run
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "SocialHub.wsgi:application"]
