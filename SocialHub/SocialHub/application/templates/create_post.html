@@ -2,6 +2,9 @@
 
 {% block content %}
     <h2>Create Post</h2>
+    <br/><br/>
+    <h3> {{ template.title }} </h3>
+    <p> {{ template.description }} </p>
     <br/>
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
@@ -13,6 +16,6 @@
 
         {{ form.as_p }}
         
-        <input type="submit" value="Post" class="btn btn-secondary">
+        <input type="submit" value="Post" class="btn btn-success">
     </form>
 {% endblock %}

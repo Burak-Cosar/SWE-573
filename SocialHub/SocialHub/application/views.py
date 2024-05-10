@@ -39,10 +39,25 @@ def create_community(request):
             # Automatically adding the creator as a member and an admin
             CommunityMembership.objects.create(community=community, user=request.user)
             community.moderator.add(request.user)  # Adding as admin
+
+            # Creating a default template for the new community
+            default_template = Template.objects.create(
+                title="Default Template",
+                description="This is a default template with Title and Description fields.",
+                community=community
+            )
+
+            TemplateField.objects.create(
+                template=default_template,
+                field_name='Description',
+                field_type='textArea'
+            )
+
             return redirect('community_content', community_id=community.id)
     else:
         form = CommunityForm()
     return render(request, 'create_community.html', {'form': form})
+
 
 @login_required
 def community_content(request, community_id):
@@ -164,7 +179,6 @@ def create_template(request, community_id):
 
 @login_required
 def create_post(request, community_id, template_id):
-    community = get_object_or_404(Community, pk=community_id)
     template = get_object_or_404(Template, pk=template_id)
     template_fields = list(template.fields.all().values('field_name', 'field_type'))
 
@@ -172,24 +186,20 @@ def create_post(request, community_id, template_id):
         form = DynamicPostForm(request.POST, template_fields=template_fields)
         if form.is_valid():
             new_post = form.save(commit=False)
-            new_post.community = community
-            new_post.template = template
+            new_post.community_id = community_id
             new_post.created_by = request.user
 
-            # JSON field
+            # Handling JSON data
             data = {}
             for field in template_fields:
                 field_name = field['field_name']
-                if field_name in form.cleaned_data:
-                    # to handle date view
-                    field_value = form.cleaned_data[field_name]
-                    if isinstance(field_value, date):
-                        field_value = field_value.isoformat()
-                    data[field_name] = field_value
+                field_value = form.cleaned_data.get(field_name)
+                # Adjust for specific types if necessary, e.g., dates
+                if field['field_type'] == 'date' and field_value:
+                    field_value = field_value.isoformat()
+                data[field_name] = field_value
 
-            # to serialize date data
-            new_post.data = json.dumps(data, cls=DjangoJSONEncoder)
-
+            new_post.data = data
             new_post.save()
             return redirect('community_content', community_id=community_id)
     else:
@@ -198,7 +208,8 @@ def create_post(request, community_id, template_id):
     return render(request, 'create_post.html', {
         'form': form,
         'community_id': community_id,
-        'template_id': template_id
+        'template': template,
+        'template_id': template_id,
     })
 
 @login_required

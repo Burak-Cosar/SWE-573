@@ -32,8 +32,8 @@
         <br/><br/><br/>
 {% endif %}
     {% for post in posts %}
-    <li> <b>Title: </b>{{ post.title }}
-        <p><b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspDescription: </b> {{ post.description|slice:":150" }}</p>
+    <li> <b>Post: </b>{{ post.title }}
+        <p><b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPosted By: </b> {{ post.created_by }}</p>
         <a class="btn btn-secondary btn-sm" href="{% url 'view_post' community.id post.id %}">View</a>
         <br/><br/><br/>
     </li>

@@ -52,7 +52,6 @@ class Post(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='posts')
     template = models.ForeignKey(Template, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
     title = models.CharField(max_length=255)
-    description = models.TextField()
     data = models.JSONField(default=dict)  # JSON to store dynamic field stuff
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 

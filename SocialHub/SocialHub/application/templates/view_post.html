@@ -3,11 +3,11 @@
 {% block content %}
 <article>
     <h1>Title: {{ post.title }}</h1>
-    <p><b>Description:</b> {{ post.description }}</p>
+    <p>Created by <b>{{ post.created_by }}</b></p>
     <section>
         <ul>
             {% for key, value in post.data.items %}
-                <li>{{ key }}: {{ value }}</li>
+                <li><b>{{ key }}: </b> {{ value }}</li>
             {% endfor %}
         </ul>
     </section>
