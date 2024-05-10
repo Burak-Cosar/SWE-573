@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Invite Users</h2>
+<form method="post" action="{% url 'invite_users' community.id %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Invite Selected</button>
+</form>
+{% endblock %}

@@ -1,6 +1,9 @@
 from django import forms
 from django.forms import ModelForm, formset_factory
 from .models import Community, Template, Post, Comment
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 class CommunityForm(ModelForm):
     class Meta:
@@ -83,3 +86,15 @@ class CommentForm(forms.ModelForm):
         widgets = {
             'content': forms.Textarea(attrs={'class':'form-control', 'placeholder':'Write a comment'}),
         }
+
+class InviteForm(forms.ModelForm):
+    invited = forms.ModelMultipleChoiceField(queryset=None, widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = Community
+        fields = ['invited']
+        labels = {'invited': 'Invite Users'}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['invited'].queryset = User.objects.all()

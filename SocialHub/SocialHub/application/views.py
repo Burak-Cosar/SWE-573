@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django import forms
 from .models import Community, CommunityMembership, Template, TemplateField, Post, Comment
-from .forms import CommunityForm, TemplateForm, DynamicPostForm, CommentForm
+from .forms import CommunityForm, TemplateForm, DynamicPostForm, CommentForm, InviteForm
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
 import json
@@ -47,8 +47,15 @@ def create_community(request):
 @login_required
 def community_content(request, community_id):
     community = get_object_or_404(Community, id=community_id)
-    user_is_member = community.is_member(request.user)
-    user_is_admin = community.admin.filter(id=request.user.id).exists()
+    user = request.user
+    user_is_member = community.is_member(user)
+    user_is_admin = community.admin.filter(id=user.id).exists()
+    is_private = community.isPrivate
+    user_is_invited = community.invited.filter(id=user.id).exists()
+
+    # If the community is private and the user is not a member or invited
+    if is_private and not (user_is_member or user_is_invited):
+        return render(request, 'error.html')
 
     # Fetch templates related to the community directly
     templates = community.templates.all()
@@ -57,10 +64,12 @@ def community_content(request, community_id):
 
     return render(request, 'community.html', {
         'community': community,
+        'is_private': is_private,
         'user_is_member': user_is_member,
         'user_is_admin': user_is_admin,
+        'user_is_invited': user_is_invited,
         'templates': templates,
-        'posts': posts
+        'posts': posts,
     })
 
 @login_required
@@ -73,7 +82,7 @@ def join_community(request, community_id):
 def leave_community(request, community_id):
     community = get_object_or_404(Community, id=community_id)
     CommunityMembership.objects.filter(community=community, user=request.user).delete()
-    return redirect('community_content', community_id=community_id)
+    return redirect('list_communities')
 
 @login_required
 def list_communities(request):
@@ -81,9 +90,16 @@ def list_communities(request):
     communities_data = []
     for community in communities:
         is_member = request.user.is_member(community.id)
+        is_admin = community.admin.filter(id=request.user.id).exists()
+        if request.user in community.invited.all():
+            is_invited = True
+        else:
+            is_invited = False
         communities_data.append({
             'community': community,
-            'is_member': is_member
+            'is_member': is_member,
+            'is_invited': is_invited,
+            'is_admin': is_admin,
         })
     return render(request, 'list_communities.html', {'communities': communities_data})
 
@@ -109,9 +125,9 @@ def remove_moderator(request, community_id, user_id):
         return redirect('community_content', community_id=community.id)
     
 # TEMPLATE VIEWS
-def manage_templates(request, community_id):
+def manage_community(request, community_id):
     community = get_object_or_404(Community, id=community_id)
-    return render (request, 'manage_templates.html', {'community': community})
+    return render (request, 'manage_community.html', {'community': community})
 
 def create_template(request, community_id):
     community = get_object_or_404(Community, pk=community_id)  # Fetch the community instance
@@ -216,3 +232,25 @@ def view_post(request, community_id, post_id):
         'form': form,
         'user_is_member': user_is_member,
     })
+
+@login_required
+def invite_users(request, community_id):
+    community = get_object_or_404(Community, pk=community_id)
+    if request.method == 'POST':
+        form = InviteForm(request.POST)
+        if form.is_valid():
+            if request.user in community.admin.all():
+                selected_users = form.cleaned_data['invited']
+                for user in selected_users:
+                    community.invited.add(user)
+                return redirect('manage_community', community_id=community_id)
+            else:
+                print("User is not the admin")
+        else:
+            print("Form is invalid:", form.errors)
+    else:
+        form = InviteForm()
+    return render(request, 'invite_users.html', {'form': form, 'community': community})
+
+
+

@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+    <h1> Manage {{ community.name }} Here! </h1>
+    <br/>
+    <a class="btn btn-success btn-sm" href="{% url 'create_template' community.id %}">Create New Template</a>
+    {% if community.isPrivate %}
+    <br/><br/>
+    <a class="btn btn-primary btn-sm" href="{% url 'invite_users' community.id %}">Invite Users</a>
+    {% endif %}
+{% endblock %}

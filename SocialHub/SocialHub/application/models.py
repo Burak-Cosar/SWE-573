@@ -10,6 +10,7 @@ class Community(models.Model):
     description = models.TextField(blank=True, default='')
     admin = models.ManyToManyField(User, related_name='administered_communities')
     moderator = models.ManyToManyField(User, related_name='moderated_communities')
+    invited = models.ManyToManyField(User, related_name='invited_communities')
     members = models.ManyToManyField(User, through='CommunityMembership', related_name='members')
     isPrivate = models.BooleanField(blank=True, null=True)
 

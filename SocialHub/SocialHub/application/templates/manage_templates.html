@@ -1,9 +1,0 @@
-{% extends 'base.html' %}
-
-{% block content %}
-
-    <h1> Manage Your Templates for {{ community.name }} Here! </h1>
-    <br/>
-    <a class="btn btn-success btn-sm" href="{% url 'create_template' community.id %}">Create New Template</a>
-
-{% endblock %}

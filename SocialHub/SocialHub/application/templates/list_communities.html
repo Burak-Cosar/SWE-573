@@ -5,21 +5,50 @@
 <a class="btn btn-success" href="{% url 'create_community' %}">Create New!</a>
 <br/><hr/><br/>
 <ul>
-
     {% for community in communities %}
-    <li>
-        <strong>{{ community.community.name }}</strong> - {{ community.community.description }}
-        <br/>
-            <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.community.id %}">View</a>
-        {% if community.is_member %}
-            <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.community.id %}">Leave</a>
+        {% if not community.community.isPrivate %}
+            <li>
+            <strong>{{ community.community.name }}</strong> - {{ community.community.description }}
+            <br/>
+                <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.community.id %}">View</a>
+            {% if community.is_member %}
+                <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.community.id %}">Leave</a>
+            {% else %}
+                <a class="btn btn-success btn-sm" href="{% url 'join_community' community.community.id %}">Join</a>
+            {% endif %}
+            </li>
         {% else %}
-            <a class="btn btn-success btn-sm" href="{% url 'join_community' community.community.id %}">Join</a>
+            
+            {% if community.is_member %}
+            <li>
+            <strong><text style="background-color: black; color: white; border-radius: 5px; padding: 1px;">Private</text>  {{ community.community.name }}</strong> - {{ community.community.description }}
+            <br/>
+            <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.community.id %}">View</a>
+                {% if community.is_admin %}
+                <text style="background-color: orange; color: black; border-radius: 5px; padding: 1px;">Admin</text> 
+                {% else %}
+                <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.community.id %}">Leave</a>
+                {% endif %}
+            </li>
+            {% elif community.is_invited %}
+            <li>
+                <strong><text style="background-color: green; color: white; border-radius: 5px; padding: 1px;">You're Invited!</text> <text style="background-color: black; color: white; border-radius: 5px; padding: 1px;">Private</text>  {{ community.community.name }}</strong> - {{ community.community.description }}
+                <br/>
+                <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.community.id %}">View</a>
+                {% if community.is_member %}
+                    <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.community.id %}">Leave</a>
+                {% else %}
+                    <a class="btn btn-success btn-sm" href="{% url 'join_community' community.community.id %}">Join</a>
+                {% endif %}
+            </li>
+
+            {% endif %}
+        
         {% endif %}
-    </li>
-    <br/>
-    {% empty %}
-    <li>No communities found.</li>
+        
+        <br/>
+        {% empty %}
+        <li>No communities found.</li>
     {% endfor %}
     
 </ul>

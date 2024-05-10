@@ -9,9 +9,10 @@ urlpatterns = [
     path('community/<int:community_id>/join/', views.join_community, name='join_community'),
     path('community/<int:community_id>/leave/', views.leave_community, name='leave_community'),
     path('community/', views.list_communities, name='list_communities'),
-    path('community/<int:community_id>/templates/', views.manage_templates, name='manage_templates'),
-    path('community/<int:community_id>/templates/create', views.create_template, name='create_template'),
+    path('community/<int:community_id>/manage/', views.manage_community, name='manage_community'),
+    path('community/<int:community_id>/manage/create_template', views.create_template, name='create_template'),
     path('community/<int:community_id>/posts/<int:template_id>/create', views.create_post, name='create_post'),
     path('community/<int:community_id>/posts/<int:post_id>/', views.view_post, name='view_post'),
+    path('community/<int:community_id>/manage/invite_users', views.invite_users, name='invite_users'),
 
 ]

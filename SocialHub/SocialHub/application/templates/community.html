@@ -16,7 +16,7 @@
     <br/><hr>
     {% endif %}
     {% if user_is_admin %}  
-    <a class="btn btn-primary btn-sm" href="{% url 'manage_templates' community.id %}">Manage Templates (Admin)</a>
+    <a class="btn btn-warning btn-sm" href="{% url 'manage_community' community.id %}">Manage Community (Admin)</a>
     <br/><br/>
     {% endif %}
         <br/>
