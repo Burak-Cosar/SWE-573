@@ -31,9 +31,6 @@
         <a id="createPostLink" class="btn btn-success btn-sm" href="{% url 'create_post' community.id 0 %}">Create Post</a>
         <br/><br/><br/>
 {% endif %}
-    <hr>
-    <h2>Posts</h2>
-    <br>
     {% for post in posts %}
     <li> <b>Title: </b>{{ post.title }}
         <p><b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspDescription: </b> {{ post.description|slice:":150" }}</p>

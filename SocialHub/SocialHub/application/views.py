@@ -146,25 +146,6 @@ def create_template(request, community_id):
 
     return render(request, 'create_template.html', {'form': form, 'community_id': community_id})
 
-# def get_dynamic_form(template_id):
-#     template = Template.objects.get(pk=template_id)
-#     class DynamicForm(forms.Form):
-#         # Standard fields from Template model
-#         title = forms.CharField(max_length=255, initial=template.title)
-#         description = forms.CharField(widget=forms.Textarea, initial=template.description)
-
-#         # Dynamic fields based on the template
-#         for field in template.fields.all():
-#             if field.field_type == 'text':
-#                 field_instance = forms.CharField(label=field.field_name, required=False)
-#             elif field.field_type == 'number':
-#                 field_instance = forms.IntegerField(label=field.field_name, required=False)
-#             elif field.field_type == 'date':
-#                 field_instance = forms.DateField(label=field.field_name, required=False)
-#             # MORE TYPES WILL BE ADDED
-#             setattr(DynamicPostForm, field.field_name, field_instance)
-#     return DynamicForm
-
 @login_required
 def create_post(request, community_id, template_id):
     community = get_object_or_404(Community, pk=community_id)

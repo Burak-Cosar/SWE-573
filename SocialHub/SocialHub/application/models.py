@@ -11,6 +11,7 @@ class Community(models.Model):
     admin = models.ManyToManyField(User, related_name='administered_communities')
     moderator = models.ManyToManyField(User, related_name='moderated_communities')
     members = models.ManyToManyField(User, through='CommunityMembership', related_name='members')
+    isPrivate = models.BooleanField(blank=True, null=True)
 
     def is_member(self, user):
         return self.members.filter(id=user.id).exists()

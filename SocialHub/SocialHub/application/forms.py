@@ -5,16 +5,18 @@ from .models import Community, Template, Post, Comment
 class CommunityForm(ModelForm):
     class Meta:
         model = Community
-        fields = ('name', 'description')
+        fields = ('name', 'description', 'isPrivate')
 
         labels = {
             'name': 'Community Name',
             'description': 'Community Description',
+            'isPrivate': "Private",
             }
         
         widgets = {
             'name': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Community Name'}),
             'description': forms.Textarea(attrs={'class':'form-control', 'placeholder':'Describe Your Community'}),
+            'isPrivate': forms.CheckboxInput(attrs={'class':'form-check-input'}),
         }
 
 # DEFAULT TEMPLATE FORM

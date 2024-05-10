@@ -3,10 +3,29 @@
 {% block content %}
     <h2>Create Community</h2>
     <br/>
-    <form action="" method="POST">
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label for="id_name" class="form-label">{{ form.name.label }}</label>
+            {{ form.name }}
+        </div>
+        <div class="mb-3">
+            <label for="id_description" class="form-label">{{ form.description.label }}</label>
+            {{ form.description }}
+        </div>
+        <div class="mb-3 form-check">
+            {{ form.isPrivate }}
+            <label for="id_isPrivate" class="form-check-label">{{ form.isPrivate.label }}</label>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <!-- OLD FORM
+        <form action="" method="POST">
         {% csrf_token %}
         {{ form.as_p }}
         <br/>
         <input type="submit" value="New Community" class="btn btn-secondary">
-    </form>
+    </form> -->
 {% endblock %}
