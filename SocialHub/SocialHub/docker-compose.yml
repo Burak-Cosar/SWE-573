@@ -1,4 +1,14 @@
 services:
+  db:
+    image: postgres:13
+    ports: 
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: SocialHub
+      POSTGRES_USER: burakcosar
+      POSTGRES_PASSWORD: BC8563nb
   web:
     build: .
     command: >
@@ -12,18 +22,6 @@ services:
       - ./.env
     depends_on:
       - db
-  db:
-    image: postgres:13
-    ports: 
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: SocialHub
-      POSTGRES_USER: burakcosar
-      POSTGRES_PASSWORD: BC8563nb
-      
-
   nginx:
     image: nginx:latest
     ports:
