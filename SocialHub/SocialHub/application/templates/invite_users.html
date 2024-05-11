@@ -1,10 +1,29 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h2>Invite Users</h2>
-<form method="post" action="{% url 'invite_users' community.id %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Invite Selected</button>
-</form>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3"></div>
+        <div class="col-md-6">
+            <h2>Invite Users</h2>
+            <form method="post" action="{% url 'invite_users' community.id %}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Invite Selected</button>
+            </form>
+        </div>
+        <div class="col-md-3">
+            {% if community.isPrivate %}
+            <br/><hr><br/>
+                <h4>Invited Users</h4>
+                <ul>
+                    {% for user in community.invited.all %}
+                        <li>{{ user.username }}</li>
+                    {% endfor %}
+                </ul>
+            <br/><hr>
+            {% endif %}
+            </div>
+    </div>
+</div>
 {% endblock %}

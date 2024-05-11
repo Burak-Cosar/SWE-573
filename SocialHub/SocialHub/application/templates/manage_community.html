@@ -1,12 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
-    <h1> Manage {{ community.name }} Here! </h1>
-    <br/>
-    <a class="btn btn-success btn-sm" href="{% url 'create_template' community.id %}">Create New Template</a>
-    {% if community.isPrivate %}
-    <br/><br/>
-    <a class="btn btn-primary btn-sm" href="{% url 'invite_users' community.id %}">Invite Users</a>
-    {% endif %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3"> </div>
+        <div class="col-md-6">
+            <h1> Manage {{ community.name }} Here! </h1>
+            <br/>
+            <a class="btn btn-success btn-sm" href="{% url 'create_template' community.id %}">Create New Template</a>
+            {% if community.isPrivate %}
+            <br/><br/>
+            <a class="btn btn-warning btn-sm" href="{% url 'invite_users' community.id %}">Invite Users</a>
+            {% endif %}
+            <br/><br/>
+            <a class="btn btn-primary btn-sm" href="{% url 'community_content' community.id %}">Back to Community</a>
+        </div>
+        <div class="col-md-3">
+        {% if community.isPrivate %}
+        <br/><hr><br/>
+            <h4>Invited Users</h4>
+            <ul>
+                {% for user in community.invited.all %}
+                    <li>{{ user.username }}</li>
+                {% endfor %}
+            </ul>
+        <br/><hr>
+        {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}

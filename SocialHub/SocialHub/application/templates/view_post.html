@@ -1,43 +1,49 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<article>
-    <h1>Title: {{ post.title }}</h1>
-    <p>Created by <b>{{ post.created_by }}</b></p>
-    <section>
-        <ul>
-            {% for key, value in post.data.items %}
-                <li><b>{{ key }}: </b> {{ value }}</li>
-            {% endfor %}
-        </ul>
-    </section>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <article>
+                <h1>Title: {{ post.title }}</h1>
+                <p>Created by <b>{{ post.created_by }}</b></p>
+                <section>
+                    <ul>
+                        {% for key, value in post.data.items %}
+                            <li><b>{{ key }}: </b> {{ value }}</li>
+                        {% endfor %}
+                    </ul>
+                </section>
 
-    <section>
-        <br/><hr><br/>
-        <h3>Comments:</h3>
-        <ul>
-            {% if comments %}
-                {% for comment in comments %}
-                    <li><b>{{ comment.user.username }}</b>: {{ comment.content }}</li>
-                {% endfor %}
-            {% else %}
-            <p>Currently, no comment exists for this post!</p>
-            {% endif %}
-        </ul>
-        <br/><hr><br/>
-    {% if user_is_member %}
-        <form method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" class="btn btn-success btn-sm" >Add Comment</button>
-            <br/><br/>
-        </form>
-    </section>
-    {% endif %}
-    <footer>
-        <p><b>Posted in:</b> {{ post.community.name }}</p>
-        <br/><br/>
-        <a class="btn btn-primary btn-sm" href="{% url 'community_content' community.id %}">Back to Community</a>
-    </footer>
-</article>
+                <section>
+                    <br/><hr><br/>
+                    <h3>Comments:</h3>
+                    <ul>
+                        {% if comments %}
+                            {% for comment in comments %}
+                                <li><b>{{ comment.user.username }}</b>: {{ comment.content }}</li>
+                            {% endfor %}
+                        {% else %}
+                        <p>Currently, no comment exists for this post!</p>
+                        {% endif %}
+                    </ul>
+                    <br/><hr><br/>
+                {% if user_is_member %}
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success btn-sm" >Add Comment</button>
+                        <br/><br/>
+                    </form>
+                </section>
+                {% endif %}
+                <footer>
+                    <p><b>Posted in:</b> {{ post.community.name }}</p>
+                    <br/><br/>
+                    <a class="btn btn-primary btn-sm" href="{% url 'community_content' community.id %}">Back to Community</a>
+                </footer>
+            </article>
+        </div>
+    </div>
+</div>
 {% endblock %}

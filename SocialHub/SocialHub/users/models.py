@@ -11,3 +11,6 @@ class SocialHubUser(AbstractUser):
     def is_member(self, community_id):
         CommunityMembership = get_community_membership_model()
         return CommunityMembership.objects.filter(community_id=community_id, user=self).exists()
+    def get_communities(self):
+        CommunityMembership = get_community_membership_model()
+        return [membership.community for membership in CommunityMembership.objects.filter(user=self)]

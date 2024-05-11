@@ -14,5 +14,6 @@ urlpatterns = [
     path('community/<int:community_id>/posts/<int:template_id>/create', views.create_post, name='create_post'),
     path('community/<int:community_id>/posts/<int:post_id>/', views.view_post, name='view_post'),
     path('community/<int:community_id>/manage/invite_users', views.invite_users, name='invite_users'),
-
+    path('users/<int:user_id>', views.view_user, name='view_user'),
+    path('code_of_conduct', views.conduct, name='conduct'),
 ]

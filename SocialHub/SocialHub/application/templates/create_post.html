@@ -1,21 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Create Post</h2>
-    <br/><br/>
-    <h3> {{ template.title }} </h3>
-    <p> {{ template.description }} </p>
-    <br/>
-    <form action="" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        {% if form.errors %}
-            <div class="alert alert-danger">
-                {{ form.errors }}
-            </div>
-        {% endif %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-1"></div>
+        <div class="col-md-2" style="padding-right: 8px; border-right: 2px solid #000;"> 
+            <center> 
+                <hr><br/>
+                <a class="btn btn-primary btn-sm" href="{% url 'community_content' community_id %}">Back to Community</a>
+                <br/><br/><hr>
+            </center> 
+        </div>
+        <div class="col-md-6">
+            <h2>Create Post</h2>
+            <br/><br/>
+            <h3> {{ template.title }} </h3>
+            <p> {{ template.description }} </p>
+            <br/>
+            <form action="" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {% if form.errors %}
+                    <div class="alert alert-danger">
+                        {{ form.errors }}
+                    </div>
+                {% endif %}
 
-        {{ form.as_p }}
-        
-        <input type="submit" value="Post" class="btn btn-success">
-    </form>
+                {{ form.as_p }}
+                <br/>
+                <input type="submit" value="Post" class="btn btn-success">
+            </form>
+            <br>
+            
+        </div>
+        <div class="col-md-3"></div>
+    </div>
+</div>
 {% endblock %}

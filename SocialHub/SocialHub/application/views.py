@@ -2,10 +2,11 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django import forms
-from .models import Community, CommunityMembership, Template, TemplateField, Post, Comment
+from .models import Community, CommunityMembership, Template, TemplateField, Post, Comment 
 from .forms import CommunityForm, TemplateForm, DynamicPostForm, CommentForm, InviteForm
 from django.core.serializers.json import DjangoJSONEncoder
 from django.http import HttpResponse
+from django.db.models import Count
 import json
 from datetime import date
 
@@ -13,18 +14,29 @@ from datetime import date
 User = get_user_model()
 
 def home(request):
-    return render(request, 'home.html', {})
+    posts = Post.objects.all().order_by('-created_at')
+    communities= Community.objects.annotate(num_members=Count('members')).order_by('-num_members')
+    return render(request, 'home.html', {'posts': posts, 'communities': communities})
 
-# PLACEHOLDING FOR NOW
-# def search(request):
-#     if request.method == "POST":
-#         searched = request.POST['searched'] 
-#         items = all.objects.filter(name__contains = searched)
-        
-#         return render(request, 'search.html', {'searched': searched, 'items':items})
-#     else:
+@login_required
 def search(request):
-    return render(request, 'search.html', {})
+    if request.method == "POST":
+        searched = request.POST.get('searched', '').strip()
+
+        if searched:
+            posts = Post.objects.filter(title__icontains=searched)
+            communities = Community.objects.filter(name__icontains=searched)
+            users = User.objects.filter(username__icontains=searched)
+            return render(request, 'search.html', {
+                'searched': searched,
+                'posts': posts,
+                'communities': communities,
+                'users': users
+            })
+        else:
+            return render(request, 'search.html', {'error': 'Please enter a search term.'})
+    else:
+        return render(request, 'search.html')
 
 
 # COMMUNITY VIEWS BELOW    
@@ -75,7 +87,7 @@ def community_content(request, community_id):
     # Fetch templates related to the community directly
     templates = community.templates.all()
     # Fetch posts related to the community directly
-    posts = community.posts.all()
+    posts = community.posts.all().order_by('-created_at')
 
     return render(request, 'community.html', {
         'community': community,
@@ -254,7 +266,7 @@ def invite_users(request, community_id):
                 selected_users = form.cleaned_data['invited']
                 for user in selected_users:
                     community.invited.add(user)
-                return redirect('manage_community', community_id=community_id)
+                return redirect('community_content', community_id=community_id)
             else:
                 print("User is not the admin")
         else:
@@ -263,5 +275,11 @@ def invite_users(request, community_id):
         form = InviteForm()
     return render(request, 'invite_users.html', {'form': form, 'community': community})
 
+@login_required
+def view_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    communities = user.get_communities()
+    return render(request, 'view_user.html', {'user': user, 'communities': communities})
 
-
+def conduct(request):
+    return render(request, 'conduct.html')

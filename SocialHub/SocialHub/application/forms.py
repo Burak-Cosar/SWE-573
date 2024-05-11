@@ -99,8 +99,9 @@ class InviteForm(forms.ModelForm):
     class Meta:
         model = Community
         fields = ['invited']
-        labels = {'invited': 'Invite Users'}
+        labels = {'invited': ''}
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['invited'].queryset = User.objects.all()
+        self.fields['invited'].label = 'Select the users to invite to this private community' 

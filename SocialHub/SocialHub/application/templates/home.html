@@ -1,18 +1,63 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<center>
-    <br/><br/>
-    <h1> Welcome! </h1>
-    <br/>
-    {% if user.is_authenticated %}
-    <p>Visit the List of Communities</p>
-    <br/>
-    <a href="{% url 'list_communities' %}" class="btn btn-secondary">View Communities</a>
-    {% else %}
-    <p>You Must Register or Login to Access SportsHub!</p>
-    <a href="{% url 'register_user' %}" class="btn btn-success btn-sm">Register</a>
-    <a href="{% url 'login' %}" class="btn btn-secondary btn-sm">Login</a>
-    {% endif %}
-</center>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            {% if user.is_authenticated %}
+            <center>
+            <hr/><br/>
+            <a href="{% url 'list_communities' %}" class="btn btn-success">View All Communities</a>
+            <br/><br/><hr/><br/>
+            <h4>Popular Communities</h4>
+            <br/>
+            <ol>
+                {% for community in communities %}
+                    {% if not community.isPrivate %}
+                    <li>
+                        <p><a href="{% url 'community_content' community.id %}">{{ community.name }}</a> - {{ community.members.count }} members</p>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ol>
+            <br/>
+            <hr/>
+            {% endif %}
+            </center>
+        </div>
+        <div class="col-md-6">
+            <center>
+                {% if user.is_authenticated %}
+                <h3>Recent Posts</h3>
+                <br/>
+                    {% for post in posts %}
+                        {% if not post.community.isPrivate %}
+                        <div style="border: 2px solid darkgray; padding: 10px; border-radius: 15px;">
+                            <p><b>Post: </b>{{ post.title }}</p>
+                            <p>Posted By <b> {{ post.created_by }} </b>  at {{ post.created_at }} in <b><a href="{% url 'community_content' post.community.id %}">{{ post.community }}</a></b> </p>
+                            <a class="btn btn-secondary btn-sm" href="{% url 'view_post' post.community.id post.id %}">View</a> 
+                        </div>
+                        <br/>
+                        {% endif %}
+                    {% endfor %}
+                   
+                {% else %}
+                <br/>
+                <h1> Welcome to SocialHub! </h1>
+                <br/>
+                <p>You Must Register or Login to Access SportsHub!</p>
+                <a href="{% url 'register_user' %}" class="btn btn-success btn-sm">Register</a>
+                <a href="{% url 'login' %}" class="btn btn-secondary btn-sm">Login</a>
+                {% endif %}
+            </center>
+        </div>
+        <div class="col-md-3">
+            <center>
+            <hr><br/>
+            <a href="{% url 'conduct' %}" class="btn btn-primary">Code of Conduct</a>
+            <br/><br/><hr>
+            </center>
+        </div>
+    </div>
+</div>
 {% endblock %}

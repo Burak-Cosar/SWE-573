@@ -1,45 +1,81 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ community.name }}</h1>
-    <p>{{ community.description }}</p>
-    <a class="btn btn-primary btn-sm" href="{% url 'list_communities' %}">Back to Communities</a>
-{% if not user_is_member %}
-    <hr>
-    <h2>Join the Community to Add Posts and Comments!</h2>
-    <a class="btn btn-success btn-sm" href="{% url 'join_community' community.id %}">Join Now!</a>
-    <br/><hr><br/>
-    
-{% else %}
-    {% if not user_is_admin %}
-    <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.id %}">Leave Community</a>
-    <br/><hr>
-    {% endif %}
-    {% if user_is_admin %}  
-    <a class="btn btn-warning btn-sm" href="{% url 'manage_community' community.id %}">Manage Community (Admin)</a>
-    <br/><br/>
-    {% endif %}
-        <br/>
-        <p><b>Choose a template & create a post here!</b></p>
-        <select id="templateSelect" onchange="updateCreatePostLink()">
-        {% for template in templates %}
-        <option value="{{ template.id }}">{{ template.title }}</option>
-        {% empty %}
-        <option>No available templates</option>
-        {% endfor %}
-        </select>
-        <a id="createPostLink" class="btn btn-success btn-sm" href="{% url 'create_post' community.id 0 %}">Create Post</a>
-        <br/><br/><br/>
-{% endif %}
-    {% for post in posts %}
-    <li> <b>Post: </b>{{ post.title }}
-        <p><b>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspPosted By: </b> {{ post.created_by }}</p>
-        <a class="btn btn-secondary btn-sm" href="{% url 'view_post' community.id post.id %}">View</a>
-        <br/><br/><br/>
-    </li>
-    {% empty %}
-    <li>No posts available in this community.</li>
-    {% endfor %}
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-3" style="padding-right: 8px; border-right: 2px solid #000;" >
+            <center>
+                <hr><br>
+                <a class="btn btn-primary btn-sm" href="{% url 'list_communities' %}">Back to Communities</a>
+                <br/><br/>
+                {% if not user_is_member %}
+                <hr>
+                <p>Join Community to Post and Comment!</p>
+                <a class="btn btn-success btn-sm" href="{% url 'join_community' community.id %}">Join Now!</a>
+                <br/><hr><br/>
+                {% else %}
+                    {% if not user_is_admin %}
+                    <hr><br/>
+                    <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.id %}">Leave Community</a>
+                    <br/>
+                    {% endif %}
+                    {% if user_is_admin %}
+                    
+                    <hr>
+                    <p><b>ADMIN</b></p>
+                    <a class="btn btn-success btn-sm" href="{% url 'create_template' community.id %}">Create New Template</a>
+                    {% if community.isPrivate %}
+                    <br/><br/>
+                    <a class="btn btn-warning btn-sm" href="{% url 'invite_users' community.id %}">Invite Users</a>
+                    {% endif %}
+                    {% endif %}
+                {% endif %}
+            </center>
+        </div>
+
+        <div class="col-md-6" style="padding-left: 25px; padding-right: 25px;">
+            <h1>{{ community.name }}</h1>
+            <p>{{ community.description }}</p>
+            
+        {% if not user_is_member %}
+            
+        {% else %}
+            <br/>
+            <p><b>Choose a template & create a post here!</b></p>
+            <select id="templateSelect" onchange="updateCreatePostLink()">
+            {% for template in templates %}
+            <option value="{{ template.id }}">{{ template.title }}</option>
+            {% empty %}
+            <option>No available templates</option>
+            {% endfor %}
+            </select>
+            <a id="createPostLink" class="btn btn-success btn-sm" href="{% url 'create_post' community.id 0 %}">Create Post</a>
+            <br/><br/><br/>
+        {% endif %}
+            {% for post in posts %}
+            <li> <b>Post: </b>{{ post.title }}
+                <p>Posted By <b> {{ post.created_by }} </b>  at {{ post.created_at }} </p>
+                <a class="btn btn-secondary btn-sm" href="{% url 'view_post' community.id post.id %}">View</a>
+                <br/><br/><br/>
+            </li>
+            {% empty %}
+            <li>No posts available in this community.</li>
+            {% endfor %}
+        </div>
+        <div class="col-md-3" style="padding-left: 8px; border-left: 2px solid #000;">
+            <hr><br>
+            <h3>Members</h3>
+            {% for member in community.members.all %}
+            <li style="padding: 5px">
+                {{ member.username }}
+                <a class="btn btn-primary btn-sm" href="{% url 'view_user' member.id %}">View</a>
+            </li>
+            {% endfor %}
+            <br/><hr>
+        </div>
+    </div>
+</div>
+
   <script>
     function updateCreatePostLink() {
         var selectedTemplateId = document.getElementById('templateSelect').value;

@@ -1,10 +1,83 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<center>
-<br/><br/>
-<h1>Sorry! Search Function is Temporarily Down.</h1>
-<br/><br/>
-<a class="btn btn-primary" href="{% url 'home' %}">Go To Homepage</a>
-</center>
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <center>
+                <br/>
+                <h2>Showing Results for: "{{ searched }}" </h2>
+                <hr>
+            
+            </center>
+        </div>
+    </div>
+    <div class="row justify-content-center">
+
+        <div class="col-md-4" style="padding-left: 8px; border-right: 2px solid #000; border-left: 2px solid #000;">
+            <h4>Community results:</h4>
+            {% if communities %}
+                <br/>
+                <ul>
+                    {% for community in communities %}
+                        <li> <b>Community: </b>{{ community.name }}
+                            <a class="btn btn-success btn-sm" href="{% url 'community_content' community.id %}">View</a> </p>
+                            <br/>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <br/>
+                <h5>- No Community Found -</h5>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4" style="padding-left: 8px; border-right: 2px solid #000;">
+            <h4>Post results:</h4>
+            {% if posts %}
+                <br/>
+                <ul>
+                    {% for post in posts %}
+                        <li> <b>Post: </b>{{ post.title }}
+                            <p>Posted By <b> {{ post.created_by }} </b>
+                            <a class="btn btn-success btn-sm" href="{% url 'view_post' post.community.id post.id %}">View</a> </p>
+                            <br/>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <br/>
+                <h5>- No Post Found -</h5>
+            {% endif %}
+        </div>
+
+        <div class="col-md-3" style="padding-left: 8px; border-right: 2px solid #000;">
+            <h4>User results:</h4>
+            {% if users %}
+                <br/>
+                <ul>
+                    {% for user in users %}
+                        <li> <b>User: </b>{{ user.username }}
+                            <a class="btn btn-success btn-sm" href="{% url 'view_user' user.id %}">View</a> </p>
+                            <br/>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <br/>
+                <h5>- No User Found -</h5>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row justify-content-center">    
+        <div class="col-md-6">
+            <center>
+            <br/>
+            <a class="btn btn-primary" href="{% url 'home' %}">Go To Homepage</a>
+            </center>
+            <br/><br/> 
+        </div>
+    </div>
+  
+</div>
 {% endblock %}
