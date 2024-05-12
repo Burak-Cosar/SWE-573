@@ -15,8 +15,11 @@ User = get_user_model()
 
 def home(request):
     posts = Post.objects.all().order_by('-created_at')
+    for post in posts:
+        post.is_followed = post.created_by.is_followed(request.user)
     communities= Community.objects.annotate(num_members=Count('members')).order_by('-num_members')
-    return render(request, 'home.html', {'posts': posts, 'communities': communities})
+    followed_communities = [community for community in communities if community.is_member(request.user)]
+    return render(request, 'home.html', {'posts': posts, 'communities': communities, 'followed_communities': followed_communities})
 
 @login_required
 def search(request):
@@ -279,7 +282,21 @@ def invite_users(request, community_id):
 def view_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     communities = user.get_communities()
-    return render(request, 'view_user.html', {'user': user, 'communities': communities})
+    following = user.following.all() 
+    followed_by = user.get_followers()
+    return render(request, 'view_user.html', {'user': user, 'communities': communities, 'following': following, 'followed_by': followed_by})
 
 def conduct(request):
     return render(request, 'conduct.html')
+
+@login_required
+def follow_user(request, user_id):
+    user_to_follow = get_object_or_404(User, id=user_id)
+    request.user.follow(user_to_follow)
+    return redirect('view_user', user_id)
+
+@login_required
+def unfollow_user(request, user_id):
+    user_to_unfollow = get_object_or_404(User, id=user_id)
+    request.user.unfollow(user_to_unfollow)
+    return redirect('view_user', user_id)

@@ -12,6 +12,21 @@
             <br/><br/><hr/><br/>
             <a class="btn btn-success" href="{% url 'create_community' %}">Create New Community</a>
             </center>
+            <br/><hr/><br/>
+            <h4>Pending Invites:</h4>
+            {% for community in communities %}
+                {% if community.is_invited %}
+                        {% if not community.is_member %}
+                        <li>
+                            <strong>
+                                <text style="background-color: black; color: white; border-radius: 5px; padding: 1px;">Private</text> <br/> {{ community.community.name }}</strong>
+                            <br/>
+                            <a class="btn btn-success btn-sm" href="{% url 'join_community' community.community.id %}">Join</a>
+                            <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.community.id %}">View</a>
+                        </li>
+                        {% endif %}
+                {% endif %}
+            {% endfor %}
             <br/><hr/>
         </div>
         <div class="col-md-6">
@@ -49,7 +64,7 @@
                         </li>
                         {% elif community.is_invited %}
                         <li>
-                            <strong><text style="background-color: green; color: white; border-radius: 5px; padding: 1px;">You're Invited!</text> <text style="background-color: black; color: white; border-radius: 5px; padding: 1px;">Private</text>  {{ community.community.name }}</strong> - {{ community.community.description }}
+                            <strong><text style="background-color: green; color: white; border-radius: 5px; padding: 1px;">Invited</text> <text style="background-color: black; color: white; border-radius: 5px; padding: 1px;">Private</text>  {{ community.community.name }}</strong> - {{ community.community.description }}
                             <br/>
                             <a class="btn btn-secondary btn-sm" href="{% url 'community_content' community.community.id %}">View</a>
                             {% if community.is_member %}

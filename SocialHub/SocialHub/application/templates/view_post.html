@@ -27,7 +27,7 @@
                         <p>Currently, no comment exists for this post!</p>
                         {% endif %}
                     </ul>
-                    <br/><hr><br/>
+                    <br/><hr>
                 {% if user_is_member %}
                     <form method="post">
                         {% csrf_token %}
@@ -39,8 +39,9 @@
                 {% endif %}
                 <footer>
                     <p><b>Posted in:</b> {{ post.community.name }}</p>
-                    <br/><br/>
+                    
                     <a class="btn btn-primary btn-sm" href="{% url 'community_content' community.id %}">Back to Community</a>
+                    <br/><br/>
                 </footer>
             </article>
         </div>

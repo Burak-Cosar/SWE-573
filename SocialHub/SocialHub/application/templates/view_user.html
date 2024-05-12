@@ -4,28 +4,55 @@
 <div class="container-fluid">
     <div class="row justify-content-center">
         <div class="col-md-6">
-            <article>
                 <h1>User Profile: {{ user.username }}</h1>
-                <br/>
+                
+                    <a class="btn btn-success btn-sm" href="{% url 'follow_user' user.id %}">Follow</a>
+                    <a class="btn btn-danger btn-sm" href="{% url 'unfollow_user' user.id %}">Unfollow</a>
+                <br/><br/>
                 <section>
                     <p>First Name: {{ user.first_name }}</p>
                     <p>Last Name: {{ user.last_name }}</p>
 
-                    Subscribed Public Communities:
-                    {% for community in communities %}
-                        {% if not community.isPrivate %}
-                        <li>
-                            <a href="{% url 'community_content' community.id %}"> {{ community.name }} </a>
-                        </li>
-                        {% endif %}
-                    {% endfor %}
                 </section>
-                <footer>
-                    <br/>
-                    <a class="btn btn-primary btn-sm" href="{% url 'home' %}">Back to Home</a>
-                </footer>
-            </article>
+
         </div>
     </div>
-</div>
+    <div class="row justify-content-center">
+        <div class="col-md-2">
+            Public Communities:
+            {% for community in communities %}
+                {% if not community.isPrivate %}
+                <li>
+                    <a href="{% url 'community_content' community.id %}"> {{ community.name }} </a>
+                </li>
+                {% endif %}
+            {% endfor %}
+            <br/>
+        </div>
+        <div class="col-md-2">
+            Following:
+            {% for user in following %}
+                <li>
+                    <a href="{% url 'view_user' user.id %}"> {{ user.username }} </a>
+                </li>
+            {% endfor %}
+        </div>
+        <div class="col-md-2">
+            Followed by:
+            {% for user in followed_by %}
+                <li>
+                    <a href="{% url 'view_user' user.id %}"> {{ user.username }} </a>
+                </li>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <footer>
+            <br/>
+            <a class="btn btn-primary btn-sm" href="{% url 'home' %}">Back to Home</a>
+        </footer>
+    </div>
+
+    </div>
 {% endblock %}

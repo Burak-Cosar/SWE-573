@@ -11,36 +11,71 @@
             <br/><br/><hr/><br/>
             <h4>Popular Communities</h4>
             <br/>
-            <ol>
-                {% for community in communities %}
-                    {% if not community.isPrivate %}
-                    <li>
-                        <p><a href="{% url 'community_content' community.id %}">{{ community.name }}</a> - {{ community.members.count }} members</p>
-                    </li>
-                    {% endif %}
-                {% endfor %}
-            </ol>
+                <ol>
+                    {% for community in communities %}
+                        {% if not community.isPrivate %}
+                        <li>
+                            <p><a href="{% url 'community_content' community.id %}">{{ community.name }}</a> - {{ community.members.count }} members</p>
+                        </li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
             <br/>
             <hr/>
+            <br/>
+            <h4>Subscribed Communities</h4>
+                <ol>
+                    {% for community in followed_communities %}
+                        {% if not community.isPrivate %}
+                            <li>
+                                <p><a href="{% url 'community_content' community.id %}">{{ community.name }}</a></p>
+                            </li>
+                        {% else %}
+                            <li>
+                                <p><a href="{% url 'community_content' community.id %}">{{ community.name }}</a> <b><text style="background-color: black; color: white; border-radius: 5px; padding: 1px;">Private</text></b></p>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                </ol>
             {% endif %}
             </center>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6"  >
             <center>
                 {% if user.is_authenticated %}
-                <h3>Recent Posts</h3>
-                <br/>
-                    {% for post in posts %}
-                        {% if not post.community.isPrivate %}
-                        <div style="border: 2px solid darkgray; padding: 10px; border-radius: 15px;">
-                            <p><b>Post: </b>{{ post.title }}</p>
-                            <p>Posted By <b> {{ post.created_by }} </b>  at {{ post.created_at }} in <b><a href="{% url 'community_content' post.community.id %}">{{ post.community }}</a></b> </p>
-                            <a class="btn btn-secondary btn-sm" href="{% url 'view_post' post.community.id post.id %}">View</a> 
-                        </div>
+                    <div class="row">
+                        <div class="col-md-6" style="padding-right: 8px; border-right: 2px solid #000; border-left: 2px solid #000;">
+                        <h3>Recent:</h3>
                         <br/>
-                        {% endif %}
-                    {% endfor %}
-                   
+                            {% for post in posts %}
+                                {% if not post.community.isPrivate %}
+                                <div style="border: 2px solid darkgray; padding: 10px; border-radius: 15px;">
+                                    <p><b>Post: </b>{{ post.title }}</p>
+                                    <p>Posted by <b> <a href="{% url 'view_user' post.created_by.id %}">{{ post.created_by }}</a> </b>  at {{ post.created_at }} in <b><a href="{% url 'community_content' post.community.id %}">{{ post.community }}</a></b> </p>
+                                    <a class="btn btn-secondary btn-sm" href="{% url 'view_post' post.community.id post.id %}">View</a> 
+                                </div>
+                                <br/>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6" style="padding-right: 8px; border-right: 2px solid #000;">
+                            <h3>Following:</h3>
+                                <br/>
+                                {% for post in posts %}
+                                    {% if not post.community.isPrivate %}
+                                            {% if post.is_followed %}
+                                            <div style="border: 2px solid darkgray; padding: 10px; margin-bottom: 25px; border-radius: 15px;">
+                                                <p><b>Post: </b>{{ post.title }}</p>
+                                                <p>Posted by <b> <a href="{% url 'view_user' post.created_by.id %}">{{ post.created_by }}</a> </b>  at {{ post.created_at }} in <b><a href="{% url 'community_content' post.community.id %}">{{ post.community }}</a></b> </p>
+                                                <a class="btn btn-secondary btn-sm" href="{% url 'view_post' post.community.id post.id %}">View</a> 
+                                            </div>
+                                            {% endif %}
+                                            
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                    </div>
+
                 {% else %}
                 <br/>
                 <h1> Welcome to SocialHub! </h1>
