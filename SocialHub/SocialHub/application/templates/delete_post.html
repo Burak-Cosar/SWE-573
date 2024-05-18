@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <article>
+                <center>
+                <h2>Are you sure you want to delete this post?</h2>
+                <br/>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                    <a href="{% url 'view_post' community.id post.id %}" class="btn btn-secondary">Back to Post</a>
+                    <br/><br/>
+                </form>
+                </center>
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -11,7 +11,8 @@
                     {% csrf_token %}
                     {{ form.as_p}}
                     <br/>
-                    <input type="submit" value="Save Changes" class="btn btn-secondary">
+                    <input type="submit" value="Save Changes" class="btn btn-secondary"><br/><br/>
+                    <a href="{% url 'delete_user' user.id %}" class="btn btn-danger">Delete My Profile</a>
                 </form>
 
             {% else %}

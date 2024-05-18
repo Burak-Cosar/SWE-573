@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <article>
+                <h2>Edit Post: {{ post.title }}</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-success">Save changes</button>
+                    <br/><br/>
+                </form>
+                    <a class="btn btn-primary btn-sm" href="{% url 'view_post' community.id post.id %}">Back to Post</a>
+                    <br/><br/>
+                </footer>
+            </article>
+        </div>
+    </div>
+</div>
+{% endblock %}

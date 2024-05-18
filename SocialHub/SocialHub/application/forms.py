@@ -22,22 +22,6 @@ class CommunityForm(ModelForm):
             'isPrivate': forms.CheckboxInput(attrs={'class':'form-check-input'}),
         }
 
-# DEFAULT TEMPLATE FORM
-# class PostForm(forms.ModelForm):
-#     class Meta:
-#         model = Template
-#         fields = ['title', 'description']
-
-#         labels = {
-#             'title': 'Post Title',
-#             'description': 'What Would You Like to Say?',
-#             }
-
-#         widgets = {
-#             'title': forms.TextInput(attrs={'class':'form-control', 'placeholder':'Post Title'}),
-#             'description': forms.Textarea(attrs={'class':'form-control', 'placeholder':'What Would You Like to Say?'}),
-#         }
-
 class TemplateForm(forms.Form):
     post_title = forms.CharField(max_length=255, label="Post Title")
     post_description = forms.CharField(widget=forms.Textarea, label="Post Description")

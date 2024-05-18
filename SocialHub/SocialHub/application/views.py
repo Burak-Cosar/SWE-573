@@ -227,7 +227,6 @@ def create_post(request, community_id, template_id):
         'template_id': template_id,
     })
 
-@login_required
 def view_post(request, community_id, post_id):
     community = get_object_or_404(Community, pk=community_id)
     post = get_object_or_404(Post, pk=post_id)
@@ -258,6 +257,31 @@ def view_post(request, community_id, post_id):
         'form': form,
         'user_is_member': user_is_member,
     })
+
+@login_required
+def edit_post(request, community_id, post_id):
+    community = get_object_or_404(Community, id=community_id)
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.method == 'POST':
+        form = DynamicPostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect('view_post', community_id=community_id, post_id=post_id)
+    else:
+        form = DynamicPostForm(instance=post)
+    
+    return render(request, 'edit_post.html', {'form': form, 'community': community, 'post': post})
+
+def delete_post(request, community_id, post_id):
+    community = get_object_or_404(Community, id=community_id)
+    post = get_object_or_404(Post, id=post_id)
+    user = get_object_or_404(User, id=request.user.id)
+    if request.method == "POST":
+        post.delete(request.user)
+        return redirect('community_content', community_id=community_id)
+    
+    return render(request, 'delete_post.html', {'community': community, 'post': post, 'user': user})
 
 @login_required
 def invite_users(request, community_id):
@@ -300,3 +324,14 @@ def unfollow_user(request, user_id):
     user_to_unfollow = get_object_or_404(User, id=user_id)
     request.user.unfollow(user_to_unfollow)
     return redirect('view_user', user_id)
+
+@login_required
+def delete_user(request, user_id):
+    user = get_object_or_404(User, id=user_id)
+    request.user.delete(user)
+    if request.method == "POST":
+        user.delete(request.user)
+        return redirect('home')
+
+    return render(request, 'delete_user.html', {'user': user})
+

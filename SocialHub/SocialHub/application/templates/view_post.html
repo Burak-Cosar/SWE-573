@@ -7,6 +7,11 @@
             <article>
                 <h1>Title: {{ post.title }}</h1>
                 <p>Created by <b>{{ post.created_by }}</b></p>
+                {% if post.created_by == request.user or request.user == post.community.admin %}
+                    <a class="btn btn-warning btn-sm" href="{% url 'edit_post' community.id post.id %}">Edit Post</a>
+                    <a class="btn btn-danger btn-sm" href="{% url 'delete_post' community.id post.id %}">Delete</a>
+                {% endif %}
+                <br/><br/>
                 <section>
                     <ul>
                         {% for key, value in post.data.items %}

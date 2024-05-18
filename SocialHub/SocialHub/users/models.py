@@ -35,3 +35,7 @@ class SocialHubUser(AbstractUser):
     def get_followers(self):
         return self.followed_by.all()
     
+    def delete(self, user, *args, **kwargs):
+        if self == user:
+            SocialHubUser.objects.filter(id=self.id).delete()
+            super().delete(*args, **kwargs)

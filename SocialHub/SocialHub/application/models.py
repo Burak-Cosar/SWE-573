@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.db.models import JSONField
-
+from django.core.exceptions import PermissionDenied
 
 User = get_user_model()
 
@@ -40,7 +40,6 @@ class Template(models.Model):
         return self.title
 
 class TemplateField(models.Model):
-    community = models.ForeignKey(Community, related_name='community_template_fields', on_delete=models.CASCADE, null=True)
     template = models.ForeignKey(Template, related_name='fields', on_delete=models.CASCADE)
     field_name = models.CharField(max_length=255)
     field_type = models.CharField(max_length=100)
@@ -50,7 +49,6 @@ class TemplateField(models.Model):
 
 class Post(models.Model):
     community = models.ForeignKey(Community, on_delete=models.CASCADE, related_name='posts')
-    template = models.ForeignKey(Template, on_delete=models.SET_NULL, null=True, blank=True, related_name='posts')
     title = models.CharField(max_length=255)
     data = models.JSONField(default=dict)  # JSON to store dynamic field stuff
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -58,6 +56,13 @@ class Post(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def delete(self, user, *args, **kwargs):
+        if self.created_by == user or user == self.community.admin:
+            super().delete(*args, **kwargs)
+        else:
+            raise PermissionDenied("You do not have permission to delete this post.")
+
     
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
