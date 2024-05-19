@@ -12,8 +12,6 @@ from datetime import date
 from django.core.exceptions import PermissionDenied
 from django.core.files.storage import default_storage
 
-
-
 User = get_user_model()
 
 def home(request):
