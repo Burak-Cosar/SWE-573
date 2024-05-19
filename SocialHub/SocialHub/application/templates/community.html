@@ -17,16 +17,18 @@
                     {% if not user_is_admin %}
                     <hr><br/>
                     <a class="btn btn-danger btn-sm" href="{% url 'leave_community' community.id %}">Leave Community</a>
-                    <br/>
+                    <br/><br/><hr>
                     {% endif %}
                     {% if user_is_admin %}
                     
                     <hr>
                     <p><b>ADMIN</b></p>
                     <a class="btn btn-success btn-sm" href="{% url 'create_template' community.id %}">Create New Template</a>
-                    {% if community.isPrivate %}
                     <br/><br/>
+                    {% if community.isPrivate %}
+                    
                     <a class="btn btn-warning btn-sm" href="{% url 'invite_users' community.id %}">Invite Users</a>
+                    <br/><br/><hr><br/>
                     {% endif %}
                     {% endif %}
                 {% endif %}
@@ -54,7 +56,7 @@
         {% endif %}
             {% for post in posts %}
             <li> <b>Post: </b>{{ post.title }}
-                <p>Posted By <b> {{ post.created_by }} </b>  at {{ post.created_at }} </p>
+                <p>Posted By <b> <a href="{% url 'view_user' post.created_by.id %}">{{ post.created_by }} </a></b>  at {{ post.created_at }} </p>
                 <a class="btn btn-secondary btn-sm" href="{% url 'view_post' community.id post.id %}">View</a>
                 <br/><br/><br/>
             </li>
