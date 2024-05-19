@@ -16,6 +16,12 @@ class Community(models.Model):
 
     def is_member(self, user):
         return self.members.filter(id=user.id).exists()
+    
+    def make_moderator(self, user):
+        self.moderator.add(user)
+
+    def remove_moderator(self, user):
+        self.moderator.remove(user)
 
     def __str__(self):
         return self.name

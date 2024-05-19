@@ -69,6 +69,23 @@
             <li style="padding: 5px">
                 {{ member.username }}
                 <a class="btn btn-primary btn-sm" href="{% url 'view_user' member.id %}">View</a>
+                {% if member in community.admin.all %}
+                <text style="background-color: orange; color: black; border-radius: 5px; padding: 1px;">Admin</text>
+                {% elif member in community.moderator.all %}
+                <text style="background-color: pink; color: black; border-radius: 5px; padding: 1px;">Moderator</text>
+                {% endif %}
+
+                {% if user_is_admin %}
+                    {% if not member in community.moderator.all %}
+                        {% if member != request.user %}
+                        <a class="btn btn-success btn-sm" href="{% url 'add_moderator' community.id member.id %}">Make Moderator</a>
+                        {% endif %}
+                    {% else %}
+                        {% if member != request.user %}
+                            <a class="btn btn-danger btn-sm" href="{% url 'remove_moderator' community.id member.id %}">Remove Mod</a>
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
             </li>
             {% endfor %}
             <br/><hr>

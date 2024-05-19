@@ -12,11 +12,11 @@ def login_user(request):
         password = request.POST.get("password")
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            # Redirect to a success page
+            # Redirecting to a success page
             login(request, user)
             return redirect('home')
         else:
-            # Return to login page
+            # Returning to login page
             messages.success(request, ("There was an error logging in!"))
             return redirect('login')
 

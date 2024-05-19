@@ -15,7 +15,15 @@
                 <section>
                     <ul>
                         {% for key, value in post.data.items %}
+                            {% if key == 'image' and value %}
+                            <img src="{{ MEDIA_URL }}{{ value }}" alt="{{ key }}" style="max-width: 200px; max-height: 200px;"><br/>
+                            {% elif key == "color" and value %}
+                            {{ key }} :
+                            <span class="color-box" style="background-color: {{ value }};"></span><br/>
+                            {% else %}
                             <li><b>{{ key }}: </b> {{ value }}</li>
+                            {% endif %}
+                            <br/>
                         {% endfor %}
                     </ul>
                 </section>

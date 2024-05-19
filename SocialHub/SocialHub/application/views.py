@@ -9,6 +9,9 @@ from django.http import HttpResponse
 from django.db.models import Count
 import json
 from datetime import date
+from django.core.exceptions import PermissionDenied
+from django.core.files.storage import default_storage
+
 
 
 User = get_user_model()
@@ -87,9 +90,9 @@ def community_content(request, community_id):
     if is_private and not (user_is_member or user_is_invited):
         return render(request, 'error.html')
 
-    # Fetch templates related to the community directly
+    # Fetching templates related to the community directly
     templates = community.templates.all()
-    # Fetch posts related to the community directly
+    # Fetching posts related to the community directly
     posts = community.posts.all().order_by('-created_at')
 
     return render(request, 'community.html', {
@@ -147,7 +150,7 @@ def add_moderator(request, community_id, user_id):
 @login_required
 def remove_moderator(request, community_id, user_id):
     community = get_object_or_404(Community, id=community_id)
-    if request.user == community.admin:  # Ensure only the admin can add moderators
+    if request.user == community.admin:  # Ensuring only the admin can add moderators
         user_to_remove = get_object_or_404(User, id=user_id)
         community.moderator.remove(user_to_remove)
         return redirect('community_settings', community_id=community.id)
@@ -160,12 +163,12 @@ def manage_community(request, community_id):
     return render (request, 'manage_community.html', {'community': community})
 
 def create_template(request, community_id):
-    community = get_object_or_404(Community, pk=community_id)  # Fetch the community instance
+    community = get_object_or_404(Community, pk=community_id)  # Fetching the community instance
 
     if request.method == 'POST':
         form = TemplateForm(request.POST, extra=request.POST.get('field_count'))
         if form.is_valid():
-            # Create the template with the community link
+            # Creating the template with the community link
             template = Template(
                 title=form.cleaned_data['post_title'],
                 description=form.cleaned_data['post_description'],
@@ -198,7 +201,7 @@ def create_post(request, community_id, template_id):
     template_fields = list(template.fields.all().values('field_name', 'field_type'))
 
     if request.method == 'POST':
-        form = DynamicPostForm(request.POST, template_fields=template_fields)
+        form = DynamicPostForm(request.POST, request.FILES, template_fields=template_fields)
         if form.is_valid():
             new_post = form.save(commit=False)
             new_post.community_id = community_id
@@ -209,11 +212,26 @@ def create_post(request, community_id, template_id):
             for field in template_fields:
                 field_name = field['field_name']
                 field_value = form.cleaned_data.get(field_name)
-                # Adjust for specific types if necessary, e.g., dates
+                # Handling data types one by one
                 if field['field_type'] == 'date' and field_value:
                     field_value = field_value.isoformat()
+                elif field['field_type'] == 'time' and field_value:
+                    field_value = field_value.isoformat()
+                elif field['field_type'] == 'image' and field_value:
+                    file_path = default_storage.save(f'media/images/{field_value.name}', field_value)
+                    field_value = file_path
+                    data["image"] = field_value  
+                elif field['field_type'] == 'color' and field_value:
+                    data["color"] = field_value
+                elif field['field_type'] == 'geolocation':
+                    latitude = form.cleaned_data.get(field_name + '_latitude')
+                    longitude = form.cleaned_data.get(field_name + '_longitude')
+                    field_value = {
+                        'latitude': float(latitude) if latitude else None,
+                        'longitude': float(longitude) if longitude else None
+                    }
                 data[field_name] = field_value
-
+            
             new_post.data = data
             new_post.save()
             return redirect('community_content', community_id=community_id)
@@ -334,4 +352,27 @@ def delete_user(request, user_id):
         return redirect('home')
 
     return render(request, 'delete_user.html', {'user': user})
+
+@login_required
+def add_moderator(request, community_id, user_id):
+    community = get_object_or_404(Community, pk=community_id)
+    user = get_object_or_404(User, pk=user_id)
+
+    if community.admin.filter(id=request.user.id).exists():
+        community.make_moderator(user)
+        return redirect('community_content', community_id=community_id)
+    else:
+        raise PermissionDenied("You do not have permission to add a moderator.")
+
+@login_required
+def remove_moderator(request, community_id, user_id):
+    community = get_object_or_404(Community, pk=community_id)
+    user = get_object_or_404(User, pk=user_id)
+
+    if community.admin.filter(id=request.user.id).exists():
+        community.remove_moderator(user)
+        return redirect('community_content', community_id=community.id)
+    else:
+        raise PermissionDenied("You do not have permission to remove a moderator.")
+
 
